@@ -1,0 +1,187 @@
+{
+	"name": "usuariosql",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureSqlTwitterMagister",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "idGraph",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "idNodeType",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "idUserTwitter",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "codeUserTwitterCurrent",
+				"type": "varchar"
+			},
+			{
+				"name": "followersCurrent",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "followingsCurrent",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "favourites_count",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "statuses_count",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "location",
+				"type": "nvarchar"
+			},
+			{
+				"name": "profile_location",
+				"type": "nvarchar"
+			},
+			{
+				"name": "description",
+				"type": "nvarchar"
+			},
+			{
+				"name": "url",
+				"type": "nvarchar"
+			},
+			{
+				"name": "protected",
+				"type": "bit"
+			},
+			{
+				"name": "geo_enabled",
+				"type": "bit"
+			},
+			{
+				"name": "verified",
+				"type": "bit"
+			},
+			{
+				"name": "created_at",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "isBase",
+				"type": "bit"
+			},
+			{
+				"name": "isRoot",
+				"type": "bit"
+			},
+			{
+				"name": "isUser",
+				"type": "bit"
+			},
+			{
+				"name": "isTag",
+				"type": "bit"
+			},
+			{
+				"name": "creationDate",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "lastUpdateDate",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "levelToExplore",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "completeExploration",
+				"type": "bit"
+			},
+			{
+				"name": "jsondata",
+				"type": "nvarchar"
+			},
+			{
+				"name": "active",
+				"type": "bit"
+			},
+			{
+				"name": "name",
+				"type": "nvarchar"
+			},
+			{
+				"name": "idUserTwitterString",
+				"type": "varchar"
+			},
+			{
+				"name": "max_id_tweet_last",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "created_at_tweet_last",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "max_id_tweet_last_mention",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "created_at_tweet_last_mention",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "max_id_tweet_first_mention",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "created_at_tweet_first_mention",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "DateGetTweetLast",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "contadorNodeUserTwitter",
+				"type": "int",
+				"precision": 10
+			}
+		],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "NodeUserTwitter"
+		}
+	}
+}
