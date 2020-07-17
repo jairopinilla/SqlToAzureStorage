@@ -1,0 +1,2 @@
+# SqlToAzureStorage
+proceso etl
