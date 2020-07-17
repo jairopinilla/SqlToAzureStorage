@@ -1,0 +1,42 @@
+{
+	"name": "politicos",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureSqlTwitterMagister",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "id",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "screen_name",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Nombre",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Partido",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Cargo",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Activo",
+				"type": "bit"
+			}
+		],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "Politico"
+		}
+	}
+}
