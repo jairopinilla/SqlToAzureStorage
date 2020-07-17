@@ -70,13 +70,14 @@
 				"typeProperties": {
 					"source": {
 						"type": "AzureSqlSource",
-						"queryTimeout": "02:00:00"
+						"queryTimeout": "02:00:00",
+						"isolationLevel": "ReadUncommitted"
 					},
 					"enableStaging": false
 				},
 				"inputs": [
 					{
-						"referenceName": "politicos",
+						"referenceName": "NodeType",
 						"type": "DatasetReference"
 					}
 				]
