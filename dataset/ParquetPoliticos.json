@@ -1,0 +1,19 @@
+{
+	"name": "ParquetPoliticos",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "storagegen2multiuso",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Parquet",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileSystem": "twitterdatafiles"
+			},
+			"compressionCodec": "snappy"
+		},
+		"schema": []
+	}
+}
