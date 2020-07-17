@@ -1,0 +1,30 @@
+{
+	"$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"value": "datafactoryanalitics"
+		},
+		"AzureSqlTwitterMagister_connectionString": {
+			"value": ""
+		},
+		"GoogleCloudStorage1_secretAccessKey": {
+			"value": ""
+		},
+		"storagegen2multiuso_accountKey": {
+			"value": ""
+		},
+		"GoogleCloudStorage1_properties_typeProperties_accessKeyId": {
+			"value": "GOOGASSI2M7OBQHAUDCXHROC"
+		},
+		"storagegen2multiuso_properties_typeProperties_url": {
+			"value": "https://storagegen2multiuso.dfs.core.windows.net"
+		},
+		"containerUri": {
+			"value": ""
+		},
+		"containerSasToken": {
+			"value": ""
+		}
+	}
+}
