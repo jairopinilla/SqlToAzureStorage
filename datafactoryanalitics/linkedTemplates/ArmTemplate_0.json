@@ -447,6 +447,7 @@
 				"typeProperties": {
 					"location": {
 						"type": "AzureBlobFSLocation",
+						"folderPath": "usuarios",
 						"fileSystem": "twitterdatafiles"
 					},
 					"compressionCodec": "snappy"
@@ -551,6 +552,7 @@
 				"typeProperties": {
 					"location": {
 						"type": "AzureBlobFSLocation",
+						"folderPath": "subusuario",
 						"fileSystem": "twitterdatafiles"
 					},
 					"compressionCodec": "snappy"
@@ -666,6 +668,183 @@
 				"typeProperties": {
 					"location": {
 						"type": "AzureBlobFSLocation",
+						"folderPath": "relacionusuarios",
+						"fileSystem": "twitterdatafiles"
+					},
+					"compressionCodec": "snappy"
+				},
+				"schema": [
+					{
+						"name": "idNodeType",
+						"type": "INT32"
+					},
+					{
+						"name": "NodeType",
+						"type": "UTF8"
+					},
+					{
+						"name": "NodeTypeDescription",
+						"type": "UTF8"
+					},
+					{
+						"name": "Active",
+						"type": "BOOLEAN"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/storagegen2multiuso')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/TagSql')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureSqlTwitterMagister",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "idTweetTag",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "idTweet",
+						"type": "bigint",
+						"precision": 19
+					},
+					{
+						"name": "textTag",
+						"type": "nvarchar"
+					},
+					{
+						"name": "activo",
+						"type": "bit"
+					},
+					{
+						"name": "fechacreacion",
+						"type": "datetime",
+						"precision": 23,
+						"scale": 3
+					}
+				],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "TweetTag"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureSqlTwitterMagister')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ParquetTag')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "storagegen2multiuso",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "Parquet",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"folderPath": "tag",
+						"fileSystem": "twitterdatafiles"
+					},
+					"compressionCodec": "snappy"
+				},
+				"schema": [
+					{
+						"name": "idNodeType",
+						"type": "INT32"
+					},
+					{
+						"name": "NodeType",
+						"type": "UTF8"
+					},
+					{
+						"name": "NodeTypeDescription",
+						"type": "UTF8"
+					},
+					{
+						"name": "Active",
+						"type": "BOOLEAN"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/storagegen2multiuso')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/urlSql')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureSqlTwitterMagister",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "idTweetURL",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "idTweet",
+						"type": "bigint",
+						"precision": 19
+					},
+					{
+						"name": "textURL",
+						"type": "nvarchar"
+					},
+					{
+						"name": "activo",
+						"type": "bit"
+					},
+					{
+						"name": "fechacreacion",
+						"type": "datetime",
+						"precision": 23,
+						"scale": 3
+					}
+				],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "TweetURL"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureSqlTwitterMagister')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ParquetURL')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "storagegen2multiuso",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "Parquet",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"folderPath": "url",
 						"fileSystem": "twitterdatafiles"
 					},
 					"compressionCodec": "snappy"
@@ -802,6 +981,291 @@
 								"parameters": {}
 							}
 						]
+					},
+					{
+						"name": "Subusuario",
+						"type": "Copy",
+						"dependsOn": [
+							{
+								"activity": "TiposUsuario",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "AzureSqlSource",
+								"sqlReaderQuery": "SELECT TOP 100 * FROM dbo.SubTwitterUser",
+								"queryTimeout": "02:00:00",
+								"isolationLevel": "ReadUncommitted"
+							},
+							"sink": {
+								"type": "ParquetSink",
+								"storeSettings": {
+									"type": "AzureBlobFSWriteSettings"
+								}
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "subusersSql",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "ParquetSubusuario",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					},
+					{
+						"name": "usuarios",
+						"type": "Copy",
+						"dependsOn": [
+							{
+								"activity": "Subusuario",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "AzureSqlSource",
+								"sqlReaderQuery": "SELECT TOP 100 * FROM dbo.NodeUserTwitter",
+								"queryTimeout": "02:00:00",
+								"isolationLevel": "ReadUncommitted"
+							},
+							"sink": {
+								"type": "ParquetSink",
+								"storeSettings": {
+									"type": "AzureBlobFSWriteSettings"
+								}
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "usuariosql",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "ParquetUsuario",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					},
+					{
+						"name": "tweetRelacion",
+						"type": "Copy",
+						"dependsOn": [
+							{
+								"activity": "usuarios",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "AzureSqlSource",
+								"sqlReaderQuery": "SELECT TOP 100 * FROM dbo.TweetRelation",
+								"queryTimeout": "02:00:00",
+								"isolationLevel": "ReadUncommitted"
+							},
+							"sink": {
+								"type": "ParquetSink",
+								"storeSettings": {
+									"type": "AzureBlobFSWriteSettings"
+								}
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "RelacionEntreUsuariosSQL",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "ParquetRelacionEntreUsuarios",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					},
+					{
+						"name": "tweettag",
+						"type": "Copy",
+						"dependsOn": [
+							{
+								"activity": "tweetRelacion",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "AzureSqlSource",
+								"sqlReaderQuery": "SELECT TOP 100 * FROM dbo.TweetTag\n\n",
+								"queryTimeout": "02:00:00",
+								"isolationLevel": "ReadUncommitted"
+							},
+							"sink": {
+								"type": "ParquetSink",
+								"storeSettings": {
+									"type": "AzureBlobFSWriteSettings"
+								}
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "TagSql",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "ParquetTag",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					},
+					{
+						"name": "tweeturl",
+						"type": "Copy",
+						"dependsOn": [
+							{
+								"activity": "tweettag",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "AzureSqlSource",
+								"sqlReaderQuery": "SELECT TOP 100 * FROM dbo.TweetURL\n",
+								"queryTimeout": "02:00:00",
+								"isolationLevel": "ReadUncommitted"
+							},
+							"sink": {
+								"type": "ParquetSink",
+								"storeSettings": {
+									"type": "AzureBlobFSWriteSettings"
+								}
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "urlSql",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "ParquetURL",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
 					}
 				],
 				"annotations": []
@@ -810,7 +1274,17 @@
 				"[concat(variables('factoryId'), '/datasets/politicosSql')]",
 				"[concat(variables('factoryId'), '/datasets/ParquetPoliticos')]",
 				"[concat(variables('factoryId'), '/datasets/NodeTypeSql')]",
-				"[concat(variables('factoryId'), '/datasets/ParquetNodeType')]"
+				"[concat(variables('factoryId'), '/datasets/ParquetNodeType')]",
+				"[concat(variables('factoryId'), '/datasets/subusersSql')]",
+				"[concat(variables('factoryId'), '/datasets/ParquetSubusuario')]",
+				"[concat(variables('factoryId'), '/datasets/usuariosql')]",
+				"[concat(variables('factoryId'), '/datasets/ParquetUsuario')]",
+				"[concat(variables('factoryId'), '/datasets/RelacionEntreUsuariosSQL')]",
+				"[concat(variables('factoryId'), '/datasets/ParquetRelacionEntreUsuarios')]",
+				"[concat(variables('factoryId'), '/datasets/TagSql')]",
+				"[concat(variables('factoryId'), '/datasets/ParquetTag')]",
+				"[concat(variables('factoryId'), '/datasets/urlSql')]",
+				"[concat(variables('factoryId'), '/datasets/ParquetURL')]"
 			]
 		}
 	]
