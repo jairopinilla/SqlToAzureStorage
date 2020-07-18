@@ -37,7 +37,7 @@
 				},
 				"inputs": [
 					{
-						"referenceName": "politicos",
+						"referenceName": "politicosSql",
 						"type": "DatasetReference"
 					}
 				],
@@ -91,7 +91,7 @@
 				},
 				"inputs": [
 					{
-						"referenceName": "NodeType",
+						"referenceName": "NodeTypeSql",
 						"type": "DatasetReference"
 					}
 				],

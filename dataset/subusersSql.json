@@ -1,0 +1,58 @@
+{
+	"name": "subusersSql",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureSqlTwitterMagister",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "id",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "id_str",
+				"type": "varchar"
+			},
+			{
+				"name": "screen_name",
+				"type": "nvarchar"
+			},
+			{
+				"name": "name",
+				"type": "nvarchar"
+			},
+			{
+				"name": "activo",
+				"type": "bit"
+			},
+			{
+				"name": "procesado",
+				"type": "bit"
+			},
+			{
+				"name": "Fechacreacion",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "levelToExplore_RootUser",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "contadorSubTwitterUser",
+				"type": "int",
+				"precision": 10
+			}
+		],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "SubTwitterUser"
+		}
+	}
+}
