@@ -1,0 +1,41 @@
+{
+	"name": "urlSql",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureSqlTwitterMagister",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "idTweetURL",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "idTweet",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "textURL",
+				"type": "nvarchar"
+			},
+			{
+				"name": "activo",
+				"type": "bit"
+			},
+			{
+				"name": "fechacreacion",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			}
+		],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "TweetURL"
+		}
+	}
+}
