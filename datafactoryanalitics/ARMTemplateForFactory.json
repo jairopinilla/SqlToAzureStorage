@@ -53,7 +53,8 @@
 						"typeProperties": {
 							"source": {
 								"type": "AzureSqlSource",
-								"queryTimeout": "02:00:00"
+								"queryTimeout": "02:00:00",
+								"isolationLevel": "ReadUncommitted"
 							},
 							"sink": {
 								"type": "ParquetSink",
@@ -164,7 +165,6 @@
 						"typeProperties": {
 							"source": {
 								"type": "AzureSqlSource",
-								"sqlReaderQuery": "SELECT TOP 100 * FROM dbo.SubTwitterUser",
 								"queryTimeout": "02:00:00",
 								"isolationLevel": "ReadUncommitted"
 							},
@@ -221,7 +221,6 @@
 						"typeProperties": {
 							"source": {
 								"type": "AzureSqlSource",
-								"sqlReaderQuery": "SELECT TOP 100 * FROM dbo.NodeUserTwitter",
 								"queryTimeout": "02:00:00",
 								"isolationLevel": "ReadUncommitted"
 							},
@@ -278,7 +277,6 @@
 						"typeProperties": {
 							"source": {
 								"type": "AzureSqlSource",
-								"sqlReaderQuery": "SELECT TOP 100 * FROM dbo.TweetRelation",
 								"queryTimeout": "02:00:00",
 								"isolationLevel": "ReadUncommitted"
 							},
@@ -335,7 +333,6 @@
 						"typeProperties": {
 							"source": {
 								"type": "AzureSqlSource",
-								"sqlReaderQuery": "SELECT TOP 100 * FROM dbo.TweetTag\n\n",
 								"queryTimeout": "02:00:00",
 								"isolationLevel": "ReadUncommitted"
 							},
@@ -392,7 +389,6 @@
 						"typeProperties": {
 							"source": {
 								"type": "AzureSqlSource",
-								"sqlReaderQuery": "SELECT TOP 100 * FROM dbo.TweetURL\n",
 								"queryTimeout": "02:00:00",
 								"isolationLevel": "ReadUncommitted"
 							},
@@ -426,6 +422,54 @@
 								"parameters": {}
 							}
 						]
+					},
+					{
+						"name": "tweet",
+						"type": "Copy",
+						"dependsOn": [
+							{
+								"activity": "tweeturl",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "AzureSqlSource",
+								"queryTimeout": "02:00:00",
+								"isolationLevel": "ReadUncommitted"
+							},
+							"sink": {
+								"type": "ParquetSink",
+								"storeSettings": {
+									"type": "AzureBlobFSWriteSettings"
+								}
+							},
+							"enableStaging": false
+						},
+						"inputs": [
+							{
+								"referenceName": "tweetsql",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "ParquetTweet",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
 					}
 				],
 				"annotations": []
@@ -444,128 +488,10 @@
 				"[concat(variables('factoryId'), '/datasets/TagSql')]",
 				"[concat(variables('factoryId'), '/datasets/ParquetTag')]",
 				"[concat(variables('factoryId'), '/datasets/urlSql')]",
-				"[concat(variables('factoryId'), '/datasets/ParquetURL')]"
+				"[concat(variables('factoryId'), '/datasets/ParquetURL')]",
+				"[concat(variables('factoryId'), '/datasets/tweetsql')]",
+				"[concat(variables('factoryId'), '/datasets/ParquetTweet')]"
 			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/ParquetPoliticos')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "storagegen2multiuso",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "Parquet",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobFSLocation",
-						"folderPath": "politicos",
-						"fileSystem": "twitterdatafiles"
-					},
-					"compressionCodec": "snappy"
-				},
-				"schema": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/storagegen2multiuso')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/politicosSql')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "AzureSqlTwitterMagister",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "AzureSqlTable",
-				"schema": [
-					{
-						"name": "id",
-						"type": "bigint",
-						"precision": 19
-					},
-					{
-						"name": "screen_name",
-						"type": "nvarchar"
-					},
-					{
-						"name": "Nombre",
-						"type": "nvarchar"
-					},
-					{
-						"name": "Partido",
-						"type": "nvarchar"
-					},
-					{
-						"name": "Cargo",
-						"type": "nvarchar"
-					},
-					{
-						"name": "Activo",
-						"type": "bit"
-					}
-				],
-				"typeProperties": {
-					"schema": "dbo",
-					"table": "Politico"
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/AzureSqlTwitterMagister')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/AzureSqlTwitterMagister')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"type": "AzureSqlDatabase",
-				"typeProperties": {
-					"connectionString": "[parameters('AzureSqlTwitterMagister_connectionString')]"
-				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/GoogleCloudStorage1')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"type": "GoogleCloudStorage",
-				"typeProperties": {
-					"serviceUrl": "https://storage.googleapis.com",
-					"accessKeyId": "[parameters('GoogleCloudStorage1_properties_typeProperties_accessKeyId')]",
-					"secretAccessKey": {
-						"type": "SecureString",
-						"value": "[parameters('GoogleCloudStorage1_secretAccessKey')]"
-					}
-				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/storagegen2multiuso')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"type": "AzureBlobFS",
-				"typeProperties": {
-					"url": "[parameters('storagegen2multiuso_properties_typeProperties_url')]",
-					"accountKey": {
-						"type": "SecureString",
-						"value": "[parameters('storagegen2multiuso_accountKey')]"
-					}
-				}
-			},
-			"dependsOn": []
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/NodeTypeSql')]",
@@ -654,6 +580,761 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/linkedServices/storagegen2multiuso')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ParquetPoliticos')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "storagegen2multiuso",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "Parquet",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"folderPath": "politicos",
+						"fileSystem": "twitterdatafiles"
+					},
+					"compressionCodec": "snappy"
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/storagegen2multiuso')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ParquetRelacionEntreUsuarios')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "storagegen2multiuso",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "Parquet",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"folderPath": "relacionusuarios",
+						"fileSystem": "twitterdatafiles"
+					},
+					"compressionCodec": "snappy"
+				},
+				"schema": [
+					{
+						"name": "idNodeType",
+						"type": "INT32"
+					},
+					{
+						"name": "NodeType",
+						"type": "UTF8"
+					},
+					{
+						"name": "NodeTypeDescription",
+						"type": "UTF8"
+					},
+					{
+						"name": "Active",
+						"type": "BOOLEAN"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/storagegen2multiuso')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ParquetSubusuario')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "storagegen2multiuso",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "Parquet",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"folderPath": "subusuario",
+						"fileSystem": "twitterdatafiles"
+					},
+					"compressionCodec": "snappy"
+				},
+				"schema": [
+					{
+						"name": "idNodeType",
+						"type": "INT32"
+					},
+					{
+						"name": "NodeType",
+						"type": "UTF8"
+					},
+					{
+						"name": "NodeTypeDescription",
+						"type": "UTF8"
+					},
+					{
+						"name": "Active",
+						"type": "BOOLEAN"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/storagegen2multiuso')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ParquetTag')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "storagegen2multiuso",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "Parquet",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"folderPath": "tag",
+						"fileSystem": "twitterdatafiles"
+					},
+					"compressionCodec": "snappy"
+				},
+				"schema": [
+					{
+						"name": "idNodeType",
+						"type": "INT32"
+					},
+					{
+						"name": "NodeType",
+						"type": "UTF8"
+					},
+					{
+						"name": "NodeTypeDescription",
+						"type": "UTF8"
+					},
+					{
+						"name": "Active",
+						"type": "BOOLEAN"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/storagegen2multiuso')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ParquetTweet')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "storagegen2multiuso",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "Parquet",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"folderPath": "tweet",
+						"fileSystem": "twitterdatafiles"
+					},
+					"compressionCodec": "snappy"
+				},
+				"schema": [
+					{
+						"name": "idNodeType",
+						"type": "INT32"
+					},
+					{
+						"name": "NodeType",
+						"type": "UTF8"
+					},
+					{
+						"name": "NodeTypeDescription",
+						"type": "UTF8"
+					},
+					{
+						"name": "Active",
+						"type": "BOOLEAN"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/storagegen2multiuso')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ParquetURL')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "storagegen2multiuso",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "Parquet",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"folderPath": "url",
+						"fileSystem": "twitterdatafiles"
+					},
+					"compressionCodec": "snappy"
+				},
+				"schema": [
+					{
+						"name": "idNodeType",
+						"type": "INT32"
+					},
+					{
+						"name": "NodeType",
+						"type": "UTF8"
+					},
+					{
+						"name": "NodeTypeDescription",
+						"type": "UTF8"
+					},
+					{
+						"name": "Active",
+						"type": "BOOLEAN"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/storagegen2multiuso')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ParquetUsuario')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "storagegen2multiuso",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "Parquet",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"folderPath": "usuarios",
+						"fileSystem": "twitterdatafiles"
+					},
+					"compressionCodec": "snappy"
+				},
+				"schema": [
+					{
+						"name": "idNodeType",
+						"type": "INT32"
+					},
+					{
+						"name": "NodeType",
+						"type": "UTF8"
+					},
+					{
+						"name": "NodeTypeDescription",
+						"type": "UTF8"
+					},
+					{
+						"name": "Active",
+						"type": "BOOLEAN"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/storagegen2multiuso')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/RelacionEntreUsuariosSQL')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureSqlTwitterMagister",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "idTweetRelation",
+						"type": "bigint",
+						"precision": 19
+					},
+					{
+						"name": "idTweet",
+						"type": "bigint",
+						"precision": 19
+					},
+					{
+						"name": "created_at",
+						"type": "datetime",
+						"precision": 23,
+						"scale": 3
+					},
+					{
+						"name": "idSource",
+						"type": "bigint",
+						"precision": 19
+					},
+					{
+						"name": "idDest",
+						"type": "bigint",
+						"precision": 19
+					},
+					{
+						"name": "ScreenNameSource",
+						"type": "nvarchar"
+					},
+					{
+						"name": "ScreenNameDest",
+						"type": "nvarchar"
+					},
+					{
+						"name": "text",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Fechacreacion",
+						"type": "datetime",
+						"precision": 23,
+						"scale": 3
+					},
+					{
+						"name": "Tipo",
+						"type": "varchar"
+					},
+					{
+						"name": "activo",
+						"type": "bit"
+					}
+				],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "TweetRelation"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureSqlTwitterMagister')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/TagSql')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureSqlTwitterMagister",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "idTweetTag",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "idTweet",
+						"type": "bigint",
+						"precision": 19
+					},
+					{
+						"name": "textTag",
+						"type": "nvarchar"
+					},
+					{
+						"name": "activo",
+						"type": "bit"
+					},
+					{
+						"name": "fechacreacion",
+						"type": "datetime",
+						"precision": 23,
+						"scale": 3
+					}
+				],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "TweetTag"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureSqlTwitterMagister')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/politicosSql')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureSqlTwitterMagister",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "id",
+						"type": "bigint",
+						"precision": 19
+					},
+					{
+						"name": "screen_name",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Nombre",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Partido",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Cargo",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Activo",
+						"type": "bit"
+					}
+				],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "Politico"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureSqlTwitterMagister')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/subusersSql')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureSqlTwitterMagister",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "id",
+						"type": "bigint",
+						"precision": 19
+					},
+					{
+						"name": "id_str",
+						"type": "varchar"
+					},
+					{
+						"name": "screen_name",
+						"type": "nvarchar"
+					},
+					{
+						"name": "name",
+						"type": "nvarchar"
+					},
+					{
+						"name": "activo",
+						"type": "bit"
+					},
+					{
+						"name": "procesado",
+						"type": "bit"
+					},
+					{
+						"name": "Fechacreacion",
+						"type": "datetime",
+						"precision": 23,
+						"scale": 3
+					},
+					{
+						"name": "levelToExplore_RootUser",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "contadorSubTwitterUser",
+						"type": "int",
+						"precision": 10
+					}
+				],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "SubTwitterUser"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureSqlTwitterMagister')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/tweetsql')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureSqlTwitterMagister",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "id",
+						"type": "bigint",
+						"precision": 19
+					},
+					{
+						"name": "id_str",
+						"type": "varchar"
+					},
+					{
+						"name": "created_at",
+						"type": "datetime",
+						"precision": 23,
+						"scale": 3
+					},
+					{
+						"name": "text",
+						"type": "nvarchar"
+					},
+					{
+						"name": "source",
+						"type": "nvarchar"
+					},
+					{
+						"name": "truncated",
+						"type": "bit"
+					},
+					{
+						"name": "in_reply_to_status_id",
+						"type": "bigint",
+						"precision": 19
+					},
+					{
+						"name": "in_reply_to_status_id_str",
+						"type": "nvarchar"
+					},
+					{
+						"name": "in_reply_to_user_id",
+						"type": "bigint",
+						"precision": 19
+					},
+					{
+						"name": "in_reply_to_user_id_str",
+						"type": "nvarchar"
+					},
+					{
+						"name": "in_reply_to_screen_name",
+						"type": "nvarchar"
+					},
+					{
+						"name": "coordinates",
+						"type": "nvarchar"
+					},
+					{
+						"name": "place",
+						"type": "nvarchar"
+					},
+					{
+						"name": "quoted_status_id",
+						"type": "bigint",
+						"precision": 19
+					},
+					{
+						"name": "quoted_status_id_str",
+						"type": "nvarchar"
+					},
+					{
+						"name": "is_quote_status",
+						"type": "bit"
+					},
+					{
+						"name": "quoted_status",
+						"type": "nvarchar"
+					},
+					{
+						"name": "retweeted_status",
+						"type": "nvarchar"
+					},
+					{
+						"name": "quote_count",
+						"type": "bigint",
+						"precision": 19
+					},
+					{
+						"name": "reply_count",
+						"type": "bigint",
+						"precision": 19
+					},
+					{
+						"name": "retweet_count",
+						"type": "bigint",
+						"precision": 19
+					},
+					{
+						"name": "favorite_count",
+						"type": "bigint",
+						"precision": 19
+					},
+					{
+						"name": "entities",
+						"type": "nvarchar"
+					},
+					{
+						"name": "extended_entities",
+						"type": "nvarchar"
+					},
+					{
+						"name": "favorited",
+						"type": "bit"
+					},
+					{
+						"name": "retweeted",
+						"type": "bit"
+					},
+					{
+						"name": "lang",
+						"type": "nvarchar"
+					},
+					{
+						"name": "matching_rules",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Activo",
+						"type": "bit"
+					},
+					{
+						"name": "fechacreacion",
+						"type": "datetime",
+						"precision": 23,
+						"scale": 3
+					},
+					{
+						"name": "procesado",
+						"type": "bit"
+					},
+					{
+						"name": "id_user",
+						"type": "bigint",
+						"precision": 19
+					},
+					{
+						"name": "contadorTweet",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "diaMes",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "diaSemana",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "diaAgno",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "nombreDia",
+						"type": "varchar"
+					},
+					{
+						"name": "numeroSemanaAgno",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "mes",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "agno",
+						"type": "int",
+						"precision": 10
+					}
+				],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "Tweet"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureSqlTwitterMagister')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/urlSql')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureSqlTwitterMagister",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "idTweetURL",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "idTweet",
+						"type": "bigint",
+						"precision": 19
+					},
+					{
+						"name": "textURL",
+						"type": "nvarchar"
+					},
+					{
+						"name": "activo",
+						"type": "bit"
+					},
+					{
+						"name": "fechacreacion",
+						"type": "datetime",
+						"precision": 23,
+						"scale": 3
+					}
+				],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "TweetURL"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureSqlTwitterMagister')]"
 			]
 		},
 		{
@@ -849,443 +1530,52 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/ParquetUsuario')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
+			"name": "[concat(parameters('factoryName'), '/AzureSqlTwitterMagister')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
 			"apiVersion": "2018-06-01",
 			"properties": {
-				"linkedServiceName": {
-					"referenceName": "storagegen2multiuso",
-					"type": "LinkedServiceReference"
-				},
 				"annotations": [],
-				"type": "Parquet",
+				"type": "AzureSqlDatabase",
 				"typeProperties": {
-					"location": {
-						"type": "AzureBlobFSLocation",
-						"folderPath": "usuarios",
-						"fileSystem": "twitterdatafiles"
-					},
-					"compressionCodec": "snappy"
-				},
-				"schema": [
-					{
-						"name": "idNodeType",
-						"type": "INT32"
-					},
-					{
-						"name": "NodeType",
-						"type": "UTF8"
-					},
-					{
-						"name": "NodeTypeDescription",
-						"type": "UTF8"
-					},
-					{
-						"name": "Active",
-						"type": "BOOLEAN"
-					}
-				]
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/storagegen2multiuso')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/subusersSql')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "AzureSqlTwitterMagister",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "AzureSqlTable",
-				"schema": [
-					{
-						"name": "id",
-						"type": "bigint",
-						"precision": 19
-					},
-					{
-						"name": "id_str",
-						"type": "varchar"
-					},
-					{
-						"name": "screen_name",
-						"type": "nvarchar"
-					},
-					{
-						"name": "name",
-						"type": "nvarchar"
-					},
-					{
-						"name": "activo",
-						"type": "bit"
-					},
-					{
-						"name": "procesado",
-						"type": "bit"
-					},
-					{
-						"name": "Fechacreacion",
-						"type": "datetime",
-						"precision": 23,
-						"scale": 3
-					},
-					{
-						"name": "levelToExplore_RootUser",
-						"type": "int",
-						"precision": 10
-					},
-					{
-						"name": "contadorSubTwitterUser",
-						"type": "int",
-						"precision": 10
-					}
-				],
-				"typeProperties": {
-					"schema": "dbo",
-					"table": "SubTwitterUser"
+					"connectionString": "[parameters('AzureSqlTwitterMagister_connectionString')]"
 				}
 			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/AzureSqlTwitterMagister')]"
-			]
+			"dependsOn": []
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/ParquetSubusuario')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
+			"name": "[concat(parameters('factoryName'), '/GoogleCloudStorage1')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
 			"apiVersion": "2018-06-01",
 			"properties": {
-				"linkedServiceName": {
-					"referenceName": "storagegen2multiuso",
-					"type": "LinkedServiceReference"
-				},
 				"annotations": [],
-				"type": "Parquet",
+				"type": "GoogleCloudStorage",
 				"typeProperties": {
-					"location": {
-						"type": "AzureBlobFSLocation",
-						"folderPath": "subusuario",
-						"fileSystem": "twitterdatafiles"
-					},
-					"compressionCodec": "snappy"
-				},
-				"schema": [
-					{
-						"name": "idNodeType",
-						"type": "INT32"
-					},
-					{
-						"name": "NodeType",
-						"type": "UTF8"
-					},
-					{
-						"name": "NodeTypeDescription",
-						"type": "UTF8"
-					},
-					{
-						"name": "Active",
-						"type": "BOOLEAN"
+					"serviceUrl": "https://storage.googleapis.com",
+					"accessKeyId": "[parameters('GoogleCloudStorage1_properties_typeProperties_accessKeyId')]",
+					"secretAccessKey": {
+						"type": "SecureString",
+						"value": "[parameters('GoogleCloudStorage1_secretAccessKey')]"
 					}
-				]
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/storagegen2multiuso')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/RelacionEntreUsuariosSQL')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "AzureSqlTwitterMagister",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "AzureSqlTable",
-				"schema": [
-					{
-						"name": "idTweetRelation",
-						"type": "bigint",
-						"precision": 19
-					},
-					{
-						"name": "idTweet",
-						"type": "bigint",
-						"precision": 19
-					},
-					{
-						"name": "created_at",
-						"type": "datetime",
-						"precision": 23,
-						"scale": 3
-					},
-					{
-						"name": "idSource",
-						"type": "bigint",
-						"precision": 19
-					},
-					{
-						"name": "idDest",
-						"type": "bigint",
-						"precision": 19
-					},
-					{
-						"name": "ScreenNameSource",
-						"type": "nvarchar"
-					},
-					{
-						"name": "ScreenNameDest",
-						"type": "nvarchar"
-					},
-					{
-						"name": "text",
-						"type": "nvarchar"
-					},
-					{
-						"name": "Fechacreacion",
-						"type": "datetime",
-						"precision": 23,
-						"scale": 3
-					},
-					{
-						"name": "Tipo",
-						"type": "varchar"
-					},
-					{
-						"name": "activo",
-						"type": "bit"
-					}
-				],
-				"typeProperties": {
-					"schema": "dbo",
-					"table": "TweetRelation"
 				}
 			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/AzureSqlTwitterMagister')]"
-			]
+			"dependsOn": []
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/ParquetRelacionEntreUsuarios')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
+			"name": "[concat(parameters('factoryName'), '/storagegen2multiuso')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
 			"apiVersion": "2018-06-01",
 			"properties": {
-				"linkedServiceName": {
-					"referenceName": "storagegen2multiuso",
-					"type": "LinkedServiceReference"
-				},
 				"annotations": [],
-				"type": "Parquet",
+				"type": "AzureBlobFS",
 				"typeProperties": {
-					"location": {
-						"type": "AzureBlobFSLocation",
-						"folderPath": "relacionusuarios",
-						"fileSystem": "twitterdatafiles"
-					},
-					"compressionCodec": "snappy"
-				},
-				"schema": [
-					{
-						"name": "idNodeType",
-						"type": "INT32"
-					},
-					{
-						"name": "NodeType",
-						"type": "UTF8"
-					},
-					{
-						"name": "NodeTypeDescription",
-						"type": "UTF8"
-					},
-					{
-						"name": "Active",
-						"type": "BOOLEAN"
+					"url": "[parameters('storagegen2multiuso_properties_typeProperties_url')]",
+					"accountKey": {
+						"type": "SecureString",
+						"value": "[parameters('storagegen2multiuso_accountKey')]"
 					}
-				]
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/storagegen2multiuso')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/TagSql')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "AzureSqlTwitterMagister",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "AzureSqlTable",
-				"schema": [
-					{
-						"name": "idTweetTag",
-						"type": "int",
-						"precision": 10
-					},
-					{
-						"name": "idTweet",
-						"type": "bigint",
-						"precision": 19
-					},
-					{
-						"name": "textTag",
-						"type": "nvarchar"
-					},
-					{
-						"name": "activo",
-						"type": "bit"
-					},
-					{
-						"name": "fechacreacion",
-						"type": "datetime",
-						"precision": 23,
-						"scale": 3
-					}
-				],
-				"typeProperties": {
-					"schema": "dbo",
-					"table": "TweetTag"
 				}
 			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/AzureSqlTwitterMagister')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/ParquetTag')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "storagegen2multiuso",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "Parquet",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobFSLocation",
-						"folderPath": "tag",
-						"fileSystem": "twitterdatafiles"
-					},
-					"compressionCodec": "snappy"
-				},
-				"schema": [
-					{
-						"name": "idNodeType",
-						"type": "INT32"
-					},
-					{
-						"name": "NodeType",
-						"type": "UTF8"
-					},
-					{
-						"name": "NodeTypeDescription",
-						"type": "UTF8"
-					},
-					{
-						"name": "Active",
-						"type": "BOOLEAN"
-					}
-				]
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/storagegen2multiuso')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/urlSql')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "AzureSqlTwitterMagister",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "AzureSqlTable",
-				"schema": [
-					{
-						"name": "idTweetURL",
-						"type": "int",
-						"precision": 10
-					},
-					{
-						"name": "idTweet",
-						"type": "bigint",
-						"precision": 19
-					},
-					{
-						"name": "textURL",
-						"type": "nvarchar"
-					},
-					{
-						"name": "activo",
-						"type": "bit"
-					},
-					{
-						"name": "fechacreacion",
-						"type": "datetime",
-						"precision": 23,
-						"scale": 3
-					}
-				],
-				"typeProperties": {
-					"schema": "dbo",
-					"table": "TweetURL"
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/AzureSqlTwitterMagister')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/ParquetURL')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "storagegen2multiuso",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "Parquet",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobFSLocation",
-						"folderPath": "url",
-						"fileSystem": "twitterdatafiles"
-					},
-					"compressionCodec": "snappy"
-				},
-				"schema": [
-					{
-						"name": "idNodeType",
-						"type": "INT32"
-					},
-					{
-						"name": "NodeType",
-						"type": "UTF8"
-					},
-					{
-						"name": "NodeTypeDescription",
-						"type": "UTF8"
-					},
-					{
-						"name": "Active",
-						"type": "BOOLEAN"
-					}
-				]
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/storagegen2multiuso')]"
-			]
+			"dependsOn": []
 		}
 	]
 }

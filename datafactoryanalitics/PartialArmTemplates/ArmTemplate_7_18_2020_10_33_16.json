@@ -1,0 +1,687 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"type": "string",
+			"metadata": "Data Factory name",
+			"defaultValue": "datafactoryanalitics"
+		}
+	},
+	"variables": {
+		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+	},
+	"resources": [
+		{
+			"name": "[concat(parameters('factoryName'), '/CopiarSqltoGen2')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "politicos",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "AzureSqlSource",
+								"queryTimeout": "02:00:00",
+								"isolationLevel": "ReadUncommitted"
+							},
+							"sink": {
+								"type": "ParquetSink",
+								"storeSettings": {
+									"type": "AzureBlobFSWriteSettings"
+								}
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "politicosSql",
+								"type": "DatasetReference"
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "ParquetPoliticos",
+								"type": "DatasetReference"
+							}
+						]
+					},
+					{
+						"name": "TiposUsuario",
+						"type": "Copy",
+						"dependsOn": [
+							{
+								"activity": "politicos",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "AzureSqlSource",
+								"queryTimeout": "02:00:00",
+								"isolationLevel": "ReadUncommitted"
+							},
+							"sink": {
+								"type": "ParquetSink",
+								"storeSettings": {
+									"type": "AzureBlobFSWriteSettings"
+								}
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "NodeTypeSql",
+								"type": "DatasetReference"
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "ParquetNodeType",
+								"type": "DatasetReference"
+							}
+						]
+					},
+					{
+						"name": "Subusuario",
+						"type": "Copy",
+						"dependsOn": [
+							{
+								"activity": "TiposUsuario",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "AzureSqlSource",
+								"queryTimeout": "02:00:00",
+								"isolationLevel": "ReadUncommitted"
+							},
+							"sink": {
+								"type": "ParquetSink",
+								"storeSettings": {
+									"type": "AzureBlobFSWriteSettings"
+								}
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "subusersSql",
+								"type": "DatasetReference"
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "ParquetSubusuario",
+								"type": "DatasetReference"
+							}
+						]
+					},
+					{
+						"name": "usuarios",
+						"type": "Copy",
+						"dependsOn": [
+							{
+								"activity": "Subusuario",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "AzureSqlSource",
+								"queryTimeout": "02:00:00",
+								"isolationLevel": "ReadUncommitted"
+							},
+							"sink": {
+								"type": "ParquetSink",
+								"storeSettings": {
+									"type": "AzureBlobFSWriteSettings"
+								}
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "usuariosql",
+								"type": "DatasetReference"
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "ParquetUsuario",
+								"type": "DatasetReference"
+							}
+						]
+					},
+					{
+						"name": "tweetRelacion",
+						"type": "Copy",
+						"dependsOn": [
+							{
+								"activity": "usuarios",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "AzureSqlSource",
+								"queryTimeout": "02:00:00",
+								"isolationLevel": "ReadUncommitted"
+							},
+							"sink": {
+								"type": "ParquetSink",
+								"storeSettings": {
+									"type": "AzureBlobFSWriteSettings"
+								}
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "RelacionEntreUsuariosSQL",
+								"type": "DatasetReference"
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "ParquetRelacionEntreUsuarios",
+								"type": "DatasetReference"
+							}
+						]
+					},
+					{
+						"name": "tweettag",
+						"type": "Copy",
+						"dependsOn": [
+							{
+								"activity": "tweetRelacion",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "AzureSqlSource",
+								"queryTimeout": "02:00:00",
+								"isolationLevel": "ReadUncommitted"
+							},
+							"sink": {
+								"type": "ParquetSink",
+								"storeSettings": {
+									"type": "AzureBlobFSWriteSettings"
+								}
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "TagSql",
+								"type": "DatasetReference"
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "ParquetTag",
+								"type": "DatasetReference"
+							}
+						]
+					},
+					{
+						"name": "tweeturl",
+						"type": "Copy",
+						"dependsOn": [
+							{
+								"activity": "tweettag",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "AzureSqlSource",
+								"queryTimeout": "02:00:00",
+								"isolationLevel": "ReadUncommitted"
+							},
+							"sink": {
+								"type": "ParquetSink",
+								"storeSettings": {
+									"type": "AzureBlobFSWriteSettings"
+								}
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "urlSql",
+								"type": "DatasetReference"
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "ParquetURL",
+								"type": "DatasetReference"
+							}
+						]
+					},
+					{
+						"name": "tweet",
+						"type": "Copy",
+						"dependsOn": [
+							{
+								"activity": "tweeturl",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "AzureSqlSource",
+								"queryTimeout": "02:00:00",
+								"isolationLevel": "ReadUncommitted"
+							},
+							"sink": {
+								"type": "ParquetSink",
+								"storeSettings": {
+									"type": "AzureBlobFSWriteSettings"
+								}
+							},
+							"enableStaging": false
+						},
+						"inputs": [
+							{
+								"referenceName": "tweetsql",
+								"type": "DatasetReference"
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "ParquetTweet",
+								"type": "DatasetReference"
+							}
+						]
+					}
+				],
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/tweetsql')]",
+				"[concat(variables('factoryId'), '/datasets/ParquetTweet')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ParquetTweet')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "storagegen2multiuso",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "Parquet",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"folderPath": "tweet",
+						"fileSystem": "twitterdatafiles"
+					},
+					"compressionCodec": "snappy"
+				},
+				"schema": [
+					{
+						"name": "idNodeType",
+						"type": "INT32"
+					},
+					{
+						"name": "NodeType",
+						"type": "UTF8"
+					},
+					{
+						"name": "NodeTypeDescription",
+						"type": "UTF8"
+					},
+					{
+						"name": "Active",
+						"type": "BOOLEAN"
+					}
+				]
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/tweetsql')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureSqlTwitterMagister",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "id",
+						"type": "bigint",
+						"precision": 19
+					},
+					{
+						"name": "id_str",
+						"type": "varchar"
+					},
+					{
+						"name": "created_at",
+						"type": "datetime",
+						"precision": 23,
+						"scale": 3
+					},
+					{
+						"name": "text",
+						"type": "nvarchar"
+					},
+					{
+						"name": "source",
+						"type": "nvarchar"
+					},
+					{
+						"name": "truncated",
+						"type": "bit"
+					},
+					{
+						"name": "in_reply_to_status_id",
+						"type": "bigint",
+						"precision": 19
+					},
+					{
+						"name": "in_reply_to_status_id_str",
+						"type": "nvarchar"
+					},
+					{
+						"name": "in_reply_to_user_id",
+						"type": "bigint",
+						"precision": 19
+					},
+					{
+						"name": "in_reply_to_user_id_str",
+						"type": "nvarchar"
+					},
+					{
+						"name": "in_reply_to_screen_name",
+						"type": "nvarchar"
+					},
+					{
+						"name": "coordinates",
+						"type": "nvarchar"
+					},
+					{
+						"name": "place",
+						"type": "nvarchar"
+					},
+					{
+						"name": "quoted_status_id",
+						"type": "bigint",
+						"precision": 19
+					},
+					{
+						"name": "quoted_status_id_str",
+						"type": "nvarchar"
+					},
+					{
+						"name": "is_quote_status",
+						"type": "bit"
+					},
+					{
+						"name": "quoted_status",
+						"type": "nvarchar"
+					},
+					{
+						"name": "retweeted_status",
+						"type": "nvarchar"
+					},
+					{
+						"name": "quote_count",
+						"type": "bigint",
+						"precision": 19
+					},
+					{
+						"name": "reply_count",
+						"type": "bigint",
+						"precision": 19
+					},
+					{
+						"name": "retweet_count",
+						"type": "bigint",
+						"precision": 19
+					},
+					{
+						"name": "favorite_count",
+						"type": "bigint",
+						"precision": 19
+					},
+					{
+						"name": "entities",
+						"type": "nvarchar"
+					},
+					{
+						"name": "extended_entities",
+						"type": "nvarchar"
+					},
+					{
+						"name": "favorited",
+						"type": "bit"
+					},
+					{
+						"name": "retweeted",
+						"type": "bit"
+					},
+					{
+						"name": "lang",
+						"type": "nvarchar"
+					},
+					{
+						"name": "matching_rules",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Activo",
+						"type": "bit"
+					},
+					{
+						"name": "fechacreacion",
+						"type": "datetime",
+						"precision": 23,
+						"scale": 3
+					},
+					{
+						"name": "procesado",
+						"type": "bit"
+					},
+					{
+						"name": "id_user",
+						"type": "bigint",
+						"precision": 19
+					},
+					{
+						"name": "contadorTweet",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "diaMes",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "diaSemana",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "diaAgno",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "nombreDia",
+						"type": "varchar"
+					},
+					{
+						"name": "numeroSemanaAgno",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "mes",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "agno",
+						"type": "int",
+						"precision": 10
+					}
+				],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "Tweet"
+				}
+			},
+			"dependsOn": []
+		}
+	]
+}
