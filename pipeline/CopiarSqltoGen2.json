@@ -17,7 +17,8 @@
 				"typeProperties": {
 					"source": {
 						"type": "AzureSqlSource",
-						"queryTimeout": "02:00:00"
+						"queryTimeout": "02:00:00",
+						"isolationLevel": "ReadUncommitted"
 					},
 					"sink": {
 						"type": "ParquetSink",
@@ -124,7 +125,6 @@
 				"typeProperties": {
 					"source": {
 						"type": "AzureSqlSource",
-						"sqlReaderQuery": "SELECT TOP 100 * FROM dbo.SubTwitterUser",
 						"queryTimeout": "02:00:00",
 						"isolationLevel": "ReadUncommitted"
 					},
@@ -179,7 +179,6 @@
 				"typeProperties": {
 					"source": {
 						"type": "AzureSqlSource",
-						"sqlReaderQuery": "SELECT TOP 100 * FROM dbo.NodeUserTwitter",
 						"queryTimeout": "02:00:00",
 						"isolationLevel": "ReadUncommitted"
 					},
@@ -234,7 +233,6 @@
 				"typeProperties": {
 					"source": {
 						"type": "AzureSqlSource",
-						"sqlReaderQuery": "SELECT TOP 100 * FROM dbo.TweetRelation",
 						"queryTimeout": "02:00:00",
 						"isolationLevel": "ReadUncommitted"
 					},
@@ -289,7 +287,6 @@
 				"typeProperties": {
 					"source": {
 						"type": "AzureSqlSource",
-						"sqlReaderQuery": "SELECT TOP 100 * FROM dbo.TweetTag\n\n",
 						"queryTimeout": "02:00:00",
 						"isolationLevel": "ReadUncommitted"
 					},
@@ -344,7 +341,6 @@
 				"typeProperties": {
 					"source": {
 						"type": "AzureSqlSource",
-						"sqlReaderQuery": "SELECT TOP 100 * FROM dbo.TweetURL\n",
 						"queryTimeout": "02:00:00",
 						"isolationLevel": "ReadUncommitted"
 					},
