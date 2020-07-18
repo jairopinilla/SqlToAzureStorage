@@ -1,0 +1,41 @@
+{
+	"name": "TagSql",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureSqlTwitterMagister",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "idTweetTag",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "idTweet",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "textTag",
+				"type": "nvarchar"
+			},
+			{
+				"name": "activo",
+				"type": "bit"
+			},
+			{
+				"name": "fechacreacion",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			}
+		],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "TweetTag"
+		}
+	}
+}
