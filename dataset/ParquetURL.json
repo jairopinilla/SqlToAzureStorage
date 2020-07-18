@@ -1,0 +1,37 @@
+{
+	"name": "ParquetURL",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "storagegen2multiuso",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Parquet",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"folderPath": "url",
+				"fileSystem": "twitterdatafiles"
+			},
+			"compressionCodec": "snappy"
+		},
+		"schema": [
+			{
+				"name": "idNodeType",
+				"type": "INT32"
+			},
+			{
+				"name": "NodeType",
+				"type": "UTF8"
+			},
+			{
+				"name": "NodeTypeDescription",
+				"type": "UTF8"
+			},
+			{
+				"name": "Active",
+				"type": "BOOLEAN"
+			}
+		]
+	}
+}
