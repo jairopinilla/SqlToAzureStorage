@@ -1,0 +1,19 @@
+{
+	"name": "ParquetBIGDATATIPOUSUARIO",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "storagegen2multiuso",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Parquet",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileSystem": "bigquery"
+			},
+			"compressionCodec": "snappy"
+		},
+		"schema": []
+	}
+}
