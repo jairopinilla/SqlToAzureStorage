@@ -1,0 +1,82 @@
+{
+	"name": "BIGDATATWEET",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureSqlTwitterMagister",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "idtweet",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "created_at",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "text",
+				"type": "nvarchar"
+			},
+			{
+				"name": "fechacreacion",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "id_user",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "contadorTweet",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "diaMes",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "diaSemana",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "diaAgno",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "nombreDia",
+				"type": "varchar"
+			},
+			{
+				"name": "numeroSemanaAgno",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "mes",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "agno",
+				"type": "int",
+				"precision": 10
+			}
+		],
+		"typeProperties": {
+			"schema": "BIGDATA",
+			"table": "TWEET"
+		}
+	}
+}
