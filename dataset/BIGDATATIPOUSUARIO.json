@@ -1,0 +1,34 @@
+{
+	"name": "BIGDATATIPOUSUARIO",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureSqlTwitterMagister",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "idNodeType",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "NodeType",
+				"type": "varchar"
+			},
+			{
+				"name": "NodeTypeDescription",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Active",
+				"type": "bit"
+			}
+		],
+		"typeProperties": {
+			"schema": "BIGDATA",
+			"table": "TIPOUSUARIO"
+		}
+	}
+}
