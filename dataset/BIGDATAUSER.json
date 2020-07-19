@@ -1,0 +1,119 @@
+{
+	"name": "BIGDATAUSER",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureSqlTwitterMagister",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "id_user",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "idNodeType",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "screen_name",
+				"type": "varchar"
+			},
+			{
+				"name": "followersCurrent",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "followingsCurrent",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "favourites_count",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "statuses_count",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "location",
+				"type": "nvarchar"
+			},
+			{
+				"name": "description",
+				"type": "nvarchar"
+			},
+			{
+				"name": "url",
+				"type": "nvarchar"
+			},
+			{
+				"name": "created_at",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "creationDate",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "lastUpdateDate",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "name",
+				"type": "nvarchar"
+			},
+			{
+				"name": "max_id_tweet_last",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "created_at_tweet_last",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "created_at_tweet_last_mention",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "created_at_tweet_first_mention",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "DateGetTweetLast",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "contadorUserTwitter",
+				"type": "int",
+				"precision": 10
+			}
+		],
+		"typeProperties": {
+			"schema": "BIGDATA",
+			"table": "USERTWITTER"
+		}
+	}
+}
