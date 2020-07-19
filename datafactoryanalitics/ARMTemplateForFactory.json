@@ -1934,7 +1934,7 @@
 						"typeProperties": {
 							"source": {
 								"type": "AzureSqlSource",
-								"queryTimeout": "02:00:00",
+								"queryTimeout": "08:20:00",
 								"isolationLevel": "ReadUncommitted"
 							},
 							"sink": {
