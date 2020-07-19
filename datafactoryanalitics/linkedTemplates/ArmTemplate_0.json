@@ -1117,464 +1117,50 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/CopiarSqltoGen2')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
+			"name": "[concat(parameters('factoryName'), '/BIGDATAPOLITICO')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
 			"properties": {
-				"activities": [
+				"linkedServiceName": {
+					"referenceName": "AzureSqlTwitterMagister",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
 					{
-						"name": "politicos",
-						"type": "Copy",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"source": {
-								"type": "AzureSqlSource",
-								"queryTimeout": "02:00:00",
-								"isolationLevel": "ReadUncommitted"
-							},
-							"sink": {
-								"type": "ParquetSink",
-								"storeSettings": {
-									"type": "AzureBlobFSWriteSettings"
-								}
-							},
-							"enableStaging": false,
-							"translator": {
-								"type": "TabularTranslator",
-								"typeConversion": true,
-								"typeConversionSettings": {
-									"allowDataTruncation": true,
-									"treatBooleanAsNumber": false
-								}
-							}
-						},
-						"inputs": [
-							{
-								"referenceName": "politicosSql",
-								"type": "DatasetReference",
-								"parameters": {}
-							}
-						],
-						"outputs": [
-							{
-								"referenceName": "ParquetPoliticos",
-								"type": "DatasetReference",
-								"parameters": {}
-							}
-						]
+						"name": "id_user",
+						"type": "bigint",
+						"precision": 19
 					},
 					{
-						"name": "TiposUsuario",
-						"type": "Copy",
-						"dependsOn": [
-							{
-								"activity": "politicos",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"source": {
-								"type": "AzureSqlSource",
-								"queryTimeout": "02:00:00",
-								"isolationLevel": "ReadUncommitted"
-							},
-							"sink": {
-								"type": "ParquetSink",
-								"storeSettings": {
-									"type": "AzureBlobFSWriteSettings"
-								}
-							},
-							"enableStaging": false,
-							"translator": {
-								"type": "TabularTranslator",
-								"typeConversion": true,
-								"typeConversionSettings": {
-									"allowDataTruncation": true,
-									"treatBooleanAsNumber": false
-								}
-							}
-						},
-						"inputs": [
-							{
-								"referenceName": "NodeTypeSql",
-								"type": "DatasetReference",
-								"parameters": {}
-							}
-						],
-						"outputs": [
-							{
-								"referenceName": "ParquetNodeType",
-								"type": "DatasetReference",
-								"parameters": {}
-							}
-						]
+						"name": "screen_name",
+						"type": "nvarchar"
 					},
 					{
-						"name": "Subusuario",
-						"type": "Copy",
-						"dependsOn": [
-							{
-								"activity": "TiposUsuario",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"source": {
-								"type": "AzureSqlSource",
-								"queryTimeout": "02:00:00",
-								"isolationLevel": "ReadUncommitted"
-							},
-							"sink": {
-								"type": "ParquetSink",
-								"storeSettings": {
-									"type": "AzureBlobFSWriteSettings"
-								}
-							},
-							"enableStaging": false,
-							"translator": {
-								"type": "TabularTranslator",
-								"typeConversion": true,
-								"typeConversionSettings": {
-									"allowDataTruncation": true,
-									"treatBooleanAsNumber": false
-								}
-							}
-						},
-						"inputs": [
-							{
-								"referenceName": "subusersSql",
-								"type": "DatasetReference",
-								"parameters": {}
-							}
-						],
-						"outputs": [
-							{
-								"referenceName": "ParquetSubusuario",
-								"type": "DatasetReference",
-								"parameters": {}
-							}
-						]
+						"name": "Nombre",
+						"type": "nvarchar"
 					},
 					{
-						"name": "usuarios",
-						"type": "Copy",
-						"dependsOn": [
-							{
-								"activity": "Subusuario",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"source": {
-								"type": "AzureSqlSource",
-								"queryTimeout": "02:00:00",
-								"isolationLevel": "ReadUncommitted"
-							},
-							"sink": {
-								"type": "ParquetSink",
-								"storeSettings": {
-									"type": "AzureBlobFSWriteSettings"
-								}
-							},
-							"enableStaging": false,
-							"translator": {
-								"type": "TabularTranslator",
-								"typeConversion": true,
-								"typeConversionSettings": {
-									"allowDataTruncation": true,
-									"treatBooleanAsNumber": false
-								}
-							}
-						},
-						"inputs": [
-							{
-								"referenceName": "usuariosql",
-								"type": "DatasetReference",
-								"parameters": {}
-							}
-						],
-						"outputs": [
-							{
-								"referenceName": "ParquetUsuario",
-								"type": "DatasetReference",
-								"parameters": {}
-							}
-						]
+						"name": "Partido",
+						"type": "nvarchar"
 					},
 					{
-						"name": "tweetRelacion",
-						"type": "Copy",
-						"dependsOn": [
-							{
-								"activity": "usuarios",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"source": {
-								"type": "AzureSqlSource",
-								"queryTimeout": "02:00:00",
-								"isolationLevel": "ReadUncommitted"
-							},
-							"sink": {
-								"type": "ParquetSink",
-								"storeSettings": {
-									"type": "AzureBlobFSWriteSettings"
-								}
-							},
-							"enableStaging": false,
-							"translator": {
-								"type": "TabularTranslator",
-								"typeConversion": true,
-								"typeConversionSettings": {
-									"allowDataTruncation": true,
-									"treatBooleanAsNumber": false
-								}
-							}
-						},
-						"inputs": [
-							{
-								"referenceName": "RelacionEntreUsuariosSQL",
-								"type": "DatasetReference",
-								"parameters": {}
-							}
-						],
-						"outputs": [
-							{
-								"referenceName": "ParquetRelacionEntreUsuarios",
-								"type": "DatasetReference",
-								"parameters": {}
-							}
-						]
+						"name": "Cargo",
+						"type": "nvarchar"
 					},
 					{
-						"name": "tweettag",
-						"type": "Copy",
-						"dependsOn": [
-							{
-								"activity": "tweetRelacion",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"source": {
-								"type": "AzureSqlSource",
-								"queryTimeout": "02:00:00",
-								"isolationLevel": "ReadUncommitted"
-							},
-							"sink": {
-								"type": "ParquetSink",
-								"storeSettings": {
-									"type": "AzureBlobFSWriteSettings"
-								}
-							},
-							"enableStaging": false,
-							"translator": {
-								"type": "TabularTranslator",
-								"typeConversion": true,
-								"typeConversionSettings": {
-									"allowDataTruncation": true,
-									"treatBooleanAsNumber": false
-								}
-							}
-						},
-						"inputs": [
-							{
-								"referenceName": "TagSql",
-								"type": "DatasetReference",
-								"parameters": {}
-							}
-						],
-						"outputs": [
-							{
-								"referenceName": "ParquetTag",
-								"type": "DatasetReference",
-								"parameters": {}
-							}
-						]
-					},
-					{
-						"name": "tweeturl",
-						"type": "Copy",
-						"dependsOn": [
-							{
-								"activity": "tweettag",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"source": {
-								"type": "AzureSqlSource",
-								"queryTimeout": "02:00:00",
-								"isolationLevel": "ReadUncommitted"
-							},
-							"sink": {
-								"type": "ParquetSink",
-								"storeSettings": {
-									"type": "AzureBlobFSWriteSettings"
-								}
-							},
-							"enableStaging": false,
-							"translator": {
-								"type": "TabularTranslator",
-								"typeConversion": true,
-								"typeConversionSettings": {
-									"allowDataTruncation": true,
-									"treatBooleanAsNumber": false
-								}
-							}
-						},
-						"inputs": [
-							{
-								"referenceName": "urlSql",
-								"type": "DatasetReference",
-								"parameters": {}
-							}
-						],
-						"outputs": [
-							{
-								"referenceName": "ParquetURL",
-								"type": "DatasetReference",
-								"parameters": {}
-							}
-						]
-					},
-					{
-						"name": "tweet",
-						"type": "Copy",
-						"dependsOn": [
-							{
-								"activity": "tweeturl",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"source": {
-								"type": "AzureSqlSource",
-								"queryTimeout": "02:00:00",
-								"isolationLevel": "ReadUncommitted"
-							},
-							"sink": {
-								"type": "ParquetSink",
-								"storeSettings": {
-									"type": "AzureBlobFSWriteSettings"
-								}
-							},
-							"enableStaging": false
-						},
-						"inputs": [
-							{
-								"referenceName": "tweetsql",
-								"type": "DatasetReference",
-								"parameters": {}
-							}
-						],
-						"outputs": [
-							{
-								"referenceName": "ParquetTweet",
-								"type": "DatasetReference",
-								"parameters": {}
-							}
-						]
+						"name": "Activo",
+						"type": "bit"
 					}
 				],
-				"annotations": []
+				"typeProperties": {
+					"schema": "BIGDATA",
+					"table": "POLITICO"
+				}
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/politicosSql')]",
-				"[concat(variables('factoryId'), '/datasets/ParquetPoliticos')]",
-				"[concat(variables('factoryId'), '/datasets/NodeTypeSql')]",
-				"[concat(variables('factoryId'), '/datasets/ParquetNodeType')]",
-				"[concat(variables('factoryId'), '/datasets/subusersSql')]",
-				"[concat(variables('factoryId'), '/datasets/ParquetSubusuario')]",
-				"[concat(variables('factoryId'), '/datasets/usuariosql')]",
-				"[concat(variables('factoryId'), '/datasets/ParquetUsuario')]",
-				"[concat(variables('factoryId'), '/datasets/RelacionEntreUsuariosSQL')]",
-				"[concat(variables('factoryId'), '/datasets/ParquetRelacionEntreUsuarios')]",
-				"[concat(variables('factoryId'), '/datasets/TagSql')]",
-				"[concat(variables('factoryId'), '/datasets/ParquetTag')]",
-				"[concat(variables('factoryId'), '/datasets/urlSql')]",
-				"[concat(variables('factoryId'), '/datasets/ParquetURL')]",
-				"[concat(variables('factoryId'), '/datasets/tweetsql')]",
-				"[concat(variables('factoryId'), '/datasets/ParquetTweet')]"
+				"[concat(variables('factoryId'), '/linkedServices/AzureSqlTwitterMagister')]"
 			]
 		}
 	]
