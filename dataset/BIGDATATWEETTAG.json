@@ -1,0 +1,37 @@
+{
+	"name": "BIGDATATWEETTAG",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureSqlTwitterMagister",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "contadorTweetTag",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "idTweet",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "tag",
+				"type": "nvarchar"
+			},
+			{
+				"name": "fechacreacion",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			}
+		],
+		"typeProperties": {
+			"schema": "BIGDATA",
+			"table": "TWEETAG"
+		}
+	}
+}
