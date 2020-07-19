@@ -125,7 +125,8 @@
 				"typeProperties": {
 					"source": {
 						"type": "AzureSqlSource",
-						"queryTimeout": "02:00:00"
+						"queryTimeout": "02:00:00",
+						"isolationLevel": "ReadUncommitted"
 					},
 					"sink": {
 						"type": "ParquetSink",
