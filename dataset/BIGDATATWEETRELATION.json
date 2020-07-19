@@ -1,0 +1,61 @@
+{
+	"name": "BIGDATATWEETRELATION",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureSqlTwitterMagister",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "contadorTweetRelation",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "idTweet",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "created_at",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "idSource",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "idDest",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "ScreenNameSource",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ScreenNameDest",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Fechacreacion",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "Tipo",
+				"type": "varchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "BIGDATA",
+			"table": "TWEETRELATION"
+		}
+	}
+}
