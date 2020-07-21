@@ -1,0 +1,41 @@
+{
+	"name": "BIGDATASUBUSER",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureSqlTwitterMagister",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "id_user",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "screen_name",
+				"type": "nvarchar"
+			},
+			{
+				"name": "name",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Fechacreacion",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "contadorSubTwitterUser",
+				"type": "int",
+				"precision": 10
+			}
+		],
+		"typeProperties": {
+			"schema": "BIGDATA",
+			"table": "SUBUSERTWITTER"
+		}
+	}
+}
