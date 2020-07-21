@@ -13,6 +13,77 @@
 	},
 	"resources": [
 		{
+			"name": "[concat(parameters('factoryName'), '/ParquetNodeType')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "storagegen2multiuso",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "Parquet",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"folderPath": "nodetype",
+						"fileSystem": "twitterdatafiles"
+					},
+					"compressionCodec": "snappy"
+				},
+				"schema": [
+					{
+						"name": "id",
+						"type": "INT64"
+					},
+					{
+						"name": "screen_name",
+						"type": "UTF8"
+					},
+					{
+						"name": "Nombre",
+						"type": "UTF8"
+					},
+					{
+						"name": "Partido",
+						"type": "UTF8"
+					},
+					{
+						"name": "Cargo",
+						"type": "UTF8"
+					},
+					{
+						"name": "Activo",
+						"type": "BOOLEAN"
+					}
+				]
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ParquetPoliticos')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "storagegen2multiuso",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "Parquet",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"folderPath": "politicos",
+						"fileSystem": "twitterdatafiles"
+					},
+					"compressionCodec": "snappy"
+				},
+				"schema": []
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/ParquetRelacionEntreUsuarios')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -909,7 +980,7 @@
 			"dependsOn": []
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/BIGDATASUBUSER')]",
+			"name": "[concat(parameters('factoryName'), '/tweet2')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
 			"properties": {
@@ -921,81 +992,154 @@
 				"type": "AzureSqlTable",
 				"schema": [
 					{
-						"name": "id_user",
+						"name": "id",
 						"type": "bigint",
 						"precision": 19
 					},
 					{
-						"name": "screen_name",
-						"type": "nvarchar"
+						"name": "id_str",
+						"type": "varchar"
 					},
 					{
-						"name": "name",
-						"type": "nvarchar"
-					},
-					{
-						"name": "Fechacreacion",
+						"name": "created_at",
 						"type": "datetime",
 						"precision": 23,
 						"scale": 3
 					},
 					{
-						"name": "contadorSubTwitterUser",
+						"name": "text",
+						"type": "nvarchar"
+					},
+					{
+						"name": "truncated",
+						"type": "bit"
+					},
+					{
+						"name": "in_reply_to_status_id",
+						"type": "bigint",
+						"precision": 19
+					},
+					{
+						"name": "in_reply_to_status_id_str",
+						"type": "nvarchar"
+					},
+					{
+						"name": "in_reply_to_user_id",
+						"type": "bigint",
+						"precision": 19
+					},
+					{
+						"name": "in_reply_to_user_id_str",
+						"type": "nvarchar"
+					},
+					{
+						"name": "in_reply_to_screen_name",
+						"type": "nvarchar"
+					},
+					{
+						"name": "quoted_status_id",
+						"type": "bigint",
+						"precision": 19
+					},
+					{
+						"name": "is_quote_status",
+						"type": "bit"
+					},
+					{
+						"name": "quote_count",
+						"type": "bigint",
+						"precision": 19
+					},
+					{
+						"name": "reply_count",
+						"type": "bigint",
+						"precision": 19
+					},
+					{
+						"name": "retweet_count",
+						"type": "bigint",
+						"precision": 19
+					},
+					{
+						"name": "favorite_count",
+						"type": "bigint",
+						"precision": 19
+					},
+					{
+						"name": "favorited",
+						"type": "bit"
+					},
+					{
+						"name": "retweeted",
+						"type": "bit"
+					},
+					{
+						"name": "lang",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Activo",
+						"type": "bit"
+					},
+					{
+						"name": "fechacreacion",
+						"type": "datetime",
+						"precision": 23,
+						"scale": 3
+					},
+					{
+						"name": "procesado",
+						"type": "bit"
+					},
+					{
+						"name": "id_user",
+						"type": "bigint",
+						"precision": 19
+					},
+					{
+						"name": "contadorTweet",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "diaMes",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "diaSemana",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "diaAgno",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "nombreDia",
+						"type": "varchar"
+					},
+					{
+						"name": "numeroSemanaAgno",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "mes",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "agno",
 						"type": "int",
 						"precision": 10
 					}
 				],
 				"typeProperties": {
-					"schema": "BIGDATA",
-					"table": "SUBUSERTWITTER"
+					"schema": "dbo",
+					"table": "Tweet2"
 				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/ParquetBIGDATASUBUSER')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "storagegen2multiuso",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "Parquet",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobFSLocation",
-						"fileSystem": "bigquery"
-					},
-					"compressionCodec": "snappy"
-				},
-				"schema": [
-					{
-						"name": "id_user",
-						"type": "INT64"
-					},
-					{
-						"name": "screen_name",
-						"type": "UTF8"
-					},
-					{
-						"name": "Nombre",
-						"type": "UTF8"
-					},
-					{
-						"name": "Partido",
-						"type": "UTF8"
-					},
-					{
-						"name": "Cargo",
-						"type": "UTF8"
-					},
-					{
-						"name": "Activo",
-						"type": "BOOLEAN"
-					}
-				]
 			},
 			"dependsOn": []
 		},
@@ -1443,6 +1587,8 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/politicosSql')]",
+				"[concat(variables('factoryId'), '/datasets/ParquetPoliticos')]",
+				"[concat(variables('factoryId'), '/datasets/ParquetNodeType')]",
 				"[concat(variables('factoryId'), '/datasets/subusersSql')]",
 				"[concat(variables('factoryId'), '/datasets/ParquetSubusuario')]",
 				"[concat(variables('factoryId'), '/datasets/usuariosql')]",
@@ -1911,9 +2057,70 @@
 				],
 				"annotations": []
 			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/tweet2')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Copy data1",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "ParquetSource",
+								"storeSettings": {
+									"type": "AzureBlobFSReadSettings",
+									"recursive": true,
+									"wildcardFileName": "*.parquet",
+									"enablePartitionDiscovery": false
+								}
+							},
+							"sink": {
+								"type": "AzureSqlSink"
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "ParquetTweet",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "tweet2",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					}
+				],
+				"annotations": []
+			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/BIGDATASUBUSER')]",
-				"[concat(variables('factoryId'), '/datasets/ParquetBIGDATASUBUSER')]"
+				"[concat(variables('factoryId'), '/datasets/ParquetTweet')]",
+				"[concat(variables('factoryId'), '/datasets/tweet2')]"
 			]
 		}
 	]
