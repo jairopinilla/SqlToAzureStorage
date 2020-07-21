@@ -1,5 +1,5 @@
 {
-	"name": "ParquetSUBUSER",
+	"name": "ParquetBIGDATASUBUSER",
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "storagegen2multiuso",
