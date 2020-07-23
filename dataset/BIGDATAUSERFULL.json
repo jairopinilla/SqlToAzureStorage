@@ -1,0 +1,44 @@
+{
+	"name": "BIGDATAUSERFULL",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureSqlTwitterMagister",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "id_user",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "contadorSubTwitterUser",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "screen_name",
+				"type": "nvarchar"
+			},
+			{
+				"name": "idNodeType",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "Partido",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Cargo",
+				"type": "nvarchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "BIGDATA",
+			"table": "USERTWITTERFULL"
+		}
+	}
+}
