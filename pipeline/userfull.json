@@ -16,15 +16,33 @@
 				"userProperties": [],
 				"typeProperties": {
 					"source": {
-						"type": "ParquetSource",
+						"type": "AzureSqlSource",
+						"queryTimeout": "02:00:00",
+						"isolationLevel": "ReadUncommitted"
+					},
+					"sink": {
+						"type": "ParquetSink",
 						"storeSettings": {
-							"type": "AzureBlobFSReadSettings",
-							"recursive": true
+							"type": "AzureBlobFSWriteSettings"
 						}
 					},
-					"enableStaging": false
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
 				},
 				"inputs": [
+					{
+						"referenceName": "BIGDATAUSERFULL",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
 					{
 						"referenceName": "ParquetBIGDATAUSERFULL",
 						"type": "DatasetReference"
